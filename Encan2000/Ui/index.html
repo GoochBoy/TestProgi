@@ -1,0 +1,98 @@
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 60%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #eeeeee;
+    }
+
+    input {
+        font-size:16px;
+    }
+
+    option {
+        font-size:16px;
+    }
+
+    label {
+        font-size:16px;
+    }
+</style>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+ 
+<div id="app">
+    <h2>Enter base price and select car type</h2>
+
+    <form>
+        <h3>Calculate car price</h3>
+
+        <div> 
+            <label for="idBasePrice">Prix de base du v&eacute;hicule:</label>
+            <input id="idBasePrice" type="number" @change="valueChanged($event)" min="0" step=".01" required v-model="basePrice">
+        </div>
+
+        <div> 
+            <label for="idCarType">Choisir type de v&eacute;hicule:</label>
+            <select id="idCarType" name="idCarType" @change="valueChanged($event)" required v-model="carType">
+            <option value="ORDINARY">Ordinaire</option>
+            <option value="LUXURY">De luxe</option>
+            </select>
+        </div> 
+    </form>
+   
+    <table>
+        <tr>
+          <th>De base</th>
+          <th>Sp&eacute;ciaux</th>
+          <th>Association</th>
+          <th>Entreposage</th>
+          <th>Total ($)</th>
+        </tr>
+        <tr>
+          <td>{{result.baseCost}}</td>
+          <td>{{result.specialCost}}</td>
+          <td>{{result.associationCost}}</td>
+          <td>{{result.storageCost}}</td>
+          <td>{{result.total}}</td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                result: {},
+                basePrice: 0,
+                carType: "ORDINARY"
+            }
+        },
+        methods: {
+            async calculate() {
+                await axios.post("http://localhost:5228/auction/carprice/calculate", {"basePrice":this.basePrice, "carType":this.carType}).then(
+                    (response)=>{
+                        this.result = response.data;
+                    }
+                );
+            },
+            valueChanged(event){
+                this.calculate();
+            }
+        },
+        beforeMount() {
+            this.calculate();
+        }
+    })
+    app.mount('#app')
+</script>

@@ -1,14 +1,11 @@
 namespace Encan2000.Domain;
 
-public interface IAuctionPriceCalculator
-{
-    PriceInfo Calculate(CarInfo carinfo);
-}
-
 public sealed class AuctionPriceCalculator : IAuctionPriceCalculator
 {
     public PriceInfo Calculate(CarInfo carinfo)
     {
+        if (carinfo.BasePrice < 1)
+            return new PriceInfo(carinfo, 0m, 0m, 0m, 0m);
 
         return new PriceInfo(
             carinfo, 

@@ -1,5 +1,6 @@
 using Encan2000;
 using Encan2000.Domain;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,12 +25,16 @@ app.MapPost("auction/carprice/calculate", (CarPriceCalculatorRequest request, IA
     if (request.CarType != "ORDINARY" && request.CarType != "LUXURY")
         return Results.BadRequest("Invalid car type.");
 
-    var carInfo = new CarInfo(request.BasePrice, request.CarType == "LUXURY" ? CarType.Luxury : CarType.Ordinary);
-
-    var result = calculator.Calculate(carInfo);
-
-    return Results.Ok(result);
+    var result = calculator.Calculate(request.MapToCarInfo());
+    
+    var response = new CarPriceCalculatorResponse(result);
+    return Results.Ok(response);
 })
 .WithOpenApi();
+
+app.UseFileServer(new FileServerOptions{
+    FileProvider= new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Ui")),
+    EnableDefaultFiles=true
+});
 
 app.Run();

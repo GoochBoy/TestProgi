@@ -1,3 +1,10 @@
+# Setup
+- Avoir d'installé dotnet core sdk 8
+- dotnet build au niveau du projet Encan2000.csproj
+- dotnet run au niveau du projet Encan2000.csproj
+- le ui assume que l'API est lancé avec le fichier de launchSettings (dotnet run) et donc est hosté à http://localhost:5228/
+- le ui est donc accessible à http://localhost:5228/index.html
+
 # TestProgi
 Test Progi de Jean Michel Bissonnette
 
